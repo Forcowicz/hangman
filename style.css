@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+    font-size: 66.7%;
+    font-weight: 400;
+    font-family: 'Amatic SC', sans-serif;
+    line-height: 1.2;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: #000;
+    font-weight: 700;
+    background-color: #fff;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    height: 90%;
+    overflow: hidden;
+}
+
+.word {
+    display: block;
+    padding: .5rem 2rem;
+    margin: 5rem auto 5rem auto;
+    font-size: 3.4rem;
+    font-family: inherit;
+    font-weight: inherit;
+    text-align: center;
+    letter-spacing: 1.6px;
+    border: none;
+    border-bottom: 2px dashed #000;
+}
+
+.word:focus {
+    outline: none;
+}
+
+.word-label {
+    visibility: hidden;
+    font-size: 3rem;
+    display: block;
+    text-align: center;
+    transform: translateY(-3rem);
+}
+
+.word:focus + .word-label {
+    visibility: visible;
+}
+
+.image {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.hangman {
+    display: none;
+    margin: 0 auto;
+    width: 50%;
+    overflow: hidden;
+}
+
+.hangman-gameover {
+    filter: blur(5px);
+}
+
+.gameOver {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    font-size: 6rem;
+    font-weight: 700;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.gameOver--lost {
+    color: red;
+}
+
+.gameOver--win {
+    color: green;
+}
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+.stats-box {
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.stats {
+    display: inline-block;
+    font-size: 3.6rem;
+    font-weight: 700;
+}
+
+.stats > b {
+    color: red;
+}
+
+.letters {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: auto;
+}
+
+.letter {
+    position: relative;
+    display: inline-block;
+    font-size: 3.5rem;
+    width: 3rem;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.letter-hidden {
+    visibility: hidden;
+}
+
+.letter:not(:last-child) {
+    margin-right: .5rem;
+}
+
+.letter::after {
+    content: "-";
+    visibility: visible;
+    position: absolute;
+    bottom: -2rem;
+    left: 0;
+    text-align: center;
+    width: 100%;
+    transform: scaleX(2.15);
+}
+
+.letter-group {
+    margin-bottom: 2rem;
+    display: inline-block;
+}
+
+.guess {
+    position: relative;
+    font-family: inherit;
+    display: block;
+    width: 8rem;
+    padding: 1rem 2rem;
+    font-size: 5rem;
+    text-align: center;
+    border: none;
+    background-image: url("border.png");
+    background-size: cover;
+}
+
+.guess:focus {
+    outline: none;
+}
+
+.stage {
+    display: block;
+    font-size: 2.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.stage > b {
+    text-decoration: none;
+    color: red;
+}
+
+#guess {
+    font-size: 5rem;
+}
+
+#guess::after {
+    content: "------";
+}
+
+button {
+    position: relative;
+    display: inline-block;
+    border: none;
+    font-family: inherit;
+    font-size: 4rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    background-color: unset;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: none;
+}
+
+button::after {
+    visibility: hidden;
+    content: "------------";
+    position: absolute;
+    bottom: -2.25rem;
+    left: 0;
+    height: auto;
+    width: 100%;
+}
+
+button:hover::after {
+    visibility: visible;
+}
+
+/*
+BREAKPOINTS:
+900px = 56.25em
+600px = 37.5em
+400px = 25em
+*/
+
+@media only screen and (max-width: 56.25em) {
+    html {
+        font-size: 60%;
+    }
+
+    .word {
+        margin: 2rem auto;
+    }
+
+    .hangman {
+        width: 100%;
+    }
+
+    .word-label {
+        font-size: 2.5rem;
+        transform: none;
+    }
+}
+
+@media only screen and (max-width: 37.5em) {
+    html {
+        font-size: 55%;
+    }
+
+    .app {
+        width: 75%;
+    }
+}
+
+@media only screen and (max-width: 25em) {
+    html {
+        font-size: 50%;
+    }
+
+    .app {
+        width: 100%;
+    }
+}

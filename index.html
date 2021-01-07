@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hangman Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+    <div class="wrapper">
+        <main class="app">
+            <div class="image">
+                <div class="input-group">
+                    <input type="text" class="word" placeholder="Enter a word" id="word" autocomplete="off" maxlength="45">
+                    <label for="word" class="word-label">Enter a desired word to guess (if empty, a random word will be generated)</label>
+                </div>
+                <div class="gameOver" id="gameOver">Game Over :(</div>
+                <img src="hangman-0.jpg" alt="The hangman" id="hangmanImage" class="hangman">
+            </div>
+            <div class="letters">
+                <div class="letter-group">
+                    <span class="letter">t</span>
+                    <span class="letter">h</span>
+                    <span class="letter">e</span>
+                </div>
+                <div class="letter-group">
+                    <span class="letter">h</span>
+                    <span class="letter">a</span>
+                    <span class="letter">n</span>
+                    <span class="letter">g</span>
+                    <span class="letter">m</span>
+                    <span class="letter">a</span>
+                    <span class="letter">n</span>
+                </div>
+                <div class="letter-group">
+                    <span class="letter">g</span>
+                    <span class="letter">a</span>
+                    <span class="letter">m</span>
+                    <span class="letter">e</span>
+                </div>
+            </div>
+            <div class="stats-box">
+                <span class="stats">Stage: <b></b></span>
+                <span class="stats">Mistakes:<b></b></span>
+                <span class="stats">Time: <b></b></span>
+            </div>
+            <input class="guess" type="text" maxlength="1" id="guessInput" autocomplete="off">
+            <button id="guess">Start</button>
+            <button id="newGame">Play again</button>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
