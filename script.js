@@ -63,6 +63,7 @@ const game = {
         game.gameOver = false;
         game.letters = null;
         game.phase = 0;
+        game.hits = 0;
         game.triedWords = [];
         game.startTime = null;
         lettersContainer.innerHTML = 
@@ -96,6 +97,7 @@ const game = {
         hangmanImage.style.display = 'none';
         wordInput.value = '';
         hangmanImage.classList.remove('hangman-gameover');
+        hangmanImage.src = 'hangman-0.jpg';
     } 
 };
 
