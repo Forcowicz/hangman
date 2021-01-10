@@ -12,8 +12,6 @@ const lostScreen = document.getElementById('gameOver');
 const statsBox = document.querySelector('.stats-box');
 const statsElements = document.querySelectorAll('.stats-box > span > b');
 
-let randomWord;
-
 const game = {
     word: null,
     letters: null,
@@ -24,7 +22,7 @@ const game = {
     mistakes: 0,
     triedWords: [],
 
-    endGame: function(result) {
+    endGame(result) {
         this.gameOver = true;
 
         if(result === 'lost') {
@@ -56,7 +54,7 @@ const game = {
         timeElement.textContent = `${timeDifference} seconds`;
     },
 
-    init: function() {
+    init() {
         game.word = null;
         game.stage = 0;
         game.mistakes = 0;
@@ -110,7 +108,7 @@ document.addEventListener('keypress', function(e) {
 guessBtn.addEventListener('click', () => {
     if(game.phase === 0) {
         if(!wordInput.value) {
-            randomWord = [
+            const randomWord = [
               "inspection",
               "sympathy",
               "map",
