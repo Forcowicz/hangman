@@ -11,6 +11,7 @@ const lettersContainer = document.querySelector('.letters');
 const lostScreen = document.getElementById('gameOver');
 const statsBox = document.querySelector('.stats-box');
 const statsElements = document.querySelectorAll('.stats-box > span > b');
+const hint = document.getElementById('hint');
 
 const game = {
     word: null,
@@ -21,6 +22,7 @@ const game = {
     hits: 0,
     mistakes: 0,
     triedWords: [],
+    category: null,
 
     endGame(result) {
         this.gameOver = true;
@@ -64,6 +66,8 @@ const game = {
         game.hits = 0;
         game.triedWords = [];
         game.startTime = null;
+        game.endTime = null;
+        game.category = null;
         lettersContainer.innerHTML = 
                 `<div class="letter-group">
                     <span class="letter">t</span>
@@ -96,80 +100,36 @@ const game = {
         wordInput.value = '';
         hangmanImage.classList.remove('hangman-gameover');
         hangmanImage.src = 'hangman-0.jpg';
+        hint.style.display = 'none';
     } 
 };
 
 game.init();
 
 document.addEventListener('keypress', function(e) {
-    if(e.key === 'Enter') guessBtn.click();
+    if(e.code === 'Enter') guessBtn.click();
 });
 
 guessBtn.addEventListener('click', () => {
     if(game.phase === 0) {
         if(!wordInput.value) {
-            const randomWord = [
-              "inspection",
-              "sympathy",
-              "map",
-              "driver",
-              "resolution",
-              "branch",
-              "ample",
-              "funeral",
-              "level",
-              "paint",
-              "sausage",
-              "sensitivity",
-              "share",
-              "disagreement",
-              "strength",
-              "core",
-              "failure",
-              "strap",
-              "view",
-              "genuine",
-              "glove",
-              "funny",
-              "means",
-              "treat",
-              "year",
-              "integrated",
-              "strain",
-              "realize",
-              "domestic",
-              "infinite",
-              "twilight",
-              "echo",
-              "cave",
-              "invisible",
-              "space",
-              "barrel",
-              "shadow",
-              "loud",
-              "aloof",
-              "simplicity",
-              "reactor",
-              "hospital",
-              "reinforce",
-              "moral",
-              "game",
-              "promote",
-              "garbage",
-              "operational",
-              "plagiarize",
-              "linen",
-              "refund",
-              "superior",
-              "reproduction",
-              "automatic",
-            ];
-            const randomNumber = Math.trunc(Math.random() * randomWord.length) + 1;
-            game.word = randomWord[randomNumber];
+            const randomWords = {
+                noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game'],
+                verb: ['running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+                adjective: ['yellow', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+            };
+            const types = ['noun', 'verb', 'adjective'];
+            const randomNumberType = Math.trunc(Math.random() * 3);
+            const category = types[randomNumberType];
+            const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
+            game.word = randomWords[category][randomNumberWord];
+            game.category = category;
         }
         if(!game.word) game.word = wordInput.value.toLowerCase();
         if(!game.gameOver && game.word) {
             game.startTime = performance.now();
+            hint.style.display = "inline-block";
+            hint.textContent = `Category: ${game.category}`;
             guessBtn.textContent = 'Guess';
             let str = "<div class='letter-group'>";
             game.word = [...game.word];
