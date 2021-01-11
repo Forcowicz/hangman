@@ -115,8 +115,8 @@ guessBtn.addEventListener('click', () => {
         if(!wordInput.value) {
             const randomWords = {
                 noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game'],
-                verb: ['running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
-                adjective: ['yellow', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+                verb: ['sweeping', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+                adjective: ['yellow', 'gray', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
             };
             const types = ['noun', 'verb', 'adjective'];
             const randomNumberType = Math.trunc(Math.random() * 3);
@@ -128,8 +128,10 @@ guessBtn.addEventListener('click', () => {
         if(!game.word) game.word = wordInput.value.toLowerCase();
         if(!game.gameOver && game.word) {
             game.startTime = performance.now();
-            hint.style.display = "inline-block";
-            hint.textContent = `Category: ${game.category}`;
+            if(game.category) {
+                hint.style.display = "inline-block";
+                hint.textContent = `Category: ${game.category}`;
+            }
             guessBtn.textContent = 'Guess';
             let str = "<div class='letter-group'>";
             game.word = [...game.word];
@@ -161,7 +163,7 @@ guessBtn.addEventListener('click', () => {
                 if (game.hits === game.word.length) {
                   game.endGame('win');
                 }
-            } else {
+            } else if(input.value) {
                 game.stage++;
                 game.mistakes++;
                 if(game.stage >= 12) {
