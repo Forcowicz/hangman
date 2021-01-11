@@ -12,15 +12,15 @@
 <body>
     <div class="wrapper">
         <main class="app">
-            <div class="image">
+            <div class="hangman-container">
                 <div class="input-group">
-                    <input type="text" class="word" placeholder="Enter a word" id="word" autocomplete="off" maxlength="45">
-                    <label for="word" class="word-label">Enter a desired word to guess (if empty, a random word will be generated)</label>
+                    <input type="text" class="user-word-input" placeholder="Enter a word" id="userWordInput" autocomplete="off" maxlength="45">
+                    <label for="userWordInput" class="user-word-input-label">Enter a desired word to guess (if empty, a random word will be generated)</label>
                 </div>
-                <div class="gameOver" id="gameOver">Game Over :(</div>
-                <img src="hangman-0.jpg" alt="The hangman" id="hangmanImage" class="hangman">
+                <div class="gameover-screen" id="gameOver">Game Over :(</div>
+                <img src="hangman-0.jpg" alt="The hangman" id="hangmanImage" class="hangman-image">
             </div>
-            <div class="letters">
+            <div class="letters" id="lettersContainer">
                 <div class="letter-group">
                     <span class="letter">t</span>
                     <span class="letter">h</span>
@@ -47,11 +47,11 @@
                 <span class="stats">Mistakes: <b></b></span>
                 <span class="stats">Time: <b></b></span>
             </div>
-            <input class="guess" type="text" maxlength="1" id="guessInput" autocomplete="off">
+            <input class="guess-input" type="text" maxlength="1" id="guessInput" autocomplete="off">
             <span class="stats" id="hint"></span>
-            <button id="guess">Start</button>
-            <button id="newGame">Play again</button>
-            <button id="dark-mode-btn">Dark mode: Off</button>
+            <button id="guessBtn">Start</button>
+            <button id="newGameBtn">Play again</button>
+            <button id="darkModeBtn">Dark mode: Off</button>
         </main>
     </div>
     <script src="dark-mode.js"></script>

@@ -1,6 +1,6 @@
 'use strict';
 
-const darkModeBtn = document.getElementById("dark-mode-btn");
+const darkModeBtn = document.getElementById("darkModeBtn");
 const body = document.querySelector('body');
 
 const toggleDarkClass = el => {
@@ -10,7 +10,7 @@ const toggleDarkClass = el => {
 darkModeBtn.addEventListener('click', () => {
     toggleDarkClass(body);
     body.classList.toggle('dark-bg');
-    toggleDarkClass(document.querySelector(".gameOver"));
+    toggleDarkClass(document.getElementById('gameOver'));
     document.querySelectorAll('.stats > b').forEach(el => {
         toggleDarkClass(el);
     });

@@ -51,7 +51,7 @@ body {
     overflow: hidden;
 }
 
-.word {
+.user-word-input {
     display: block;
     padding: .5rem 2rem;
     margin: 5rem auto 5rem auto;
@@ -64,11 +64,11 @@ body {
     border-bottom: 2px dashed #000;
 }
 
-.word:focus {
+.user-word-input:focus {
     outline: none;
 }
 
-.word-label {
+.user-word-input-label {
     visibility: hidden;
     font-size: 3rem;
     display: block;
@@ -76,17 +76,17 @@ body {
     transform: translateY(-3rem);
 }
 
-.word:focus + .word-label {
+.user-word-input:focus + .user-word-input-label {
     visibility: visible;
 }
 
-.image {
+.hangman-container {
     position: relative;
     display: block;
     width: 100%;
 }
 
-.hangman {
+.hangman-image {
     display: none;
     margin: 0 auto;
     width: 50%;
@@ -97,7 +97,7 @@ body {
     filter: blur(5px);
 }
 
-.gameOver {
+.gameover-screen {
     position: absolute;
     left: 0;
     top: 0;
@@ -111,11 +111,11 @@ body {
     align-items: center;
 }
 
-.gameOver--lost {
+.gameover-screen--lost {
     color: red;
 }
 
-.gameOver--win {
+.gameover-screen--win {
     color: green;
 }
 
@@ -165,7 +165,7 @@ body {
     text-transform: uppercase;
 }
 
-.letter-hidden {
+.letter--hidden {
     visibility: hidden;
 }
 
@@ -189,7 +189,7 @@ body {
     display: inline-block;
 }
 
-.guess {
+.guess-input {
     position: relative;
     font-family: inherit;
     display: block;
@@ -202,27 +202,15 @@ body {
     background-size: cover;
 }
 
-.guess:focus {
+.guess-input:focus {
     outline: none;
 }
 
-.stage {
-    display: block;
-    font-size: 2.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.stage > b {
-    text-decoration: none;
-    color: red;
-}
-
-#guess {
+#guessBtn {
     font-size: 5rem;
 }
 
-#guess::after {
+#guessBtn::after {
     content: "------";
 }
 
@@ -257,7 +245,7 @@ button:hover::after {
 }
 
 
-#dark-mode-btn {
+#darkModeBtn {
     font-size: 2rem;
     font-weight: 700;
 }

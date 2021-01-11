@@ -1,14 +1,14 @@
 'use strict';
 
 const hangmanImage = document.getElementById('hangmanImage');
-const guessBtn = document.getElementById('guess');
-const resetBtn = document.getElementById('newGame');
-const input = document.getElementById('guessInput');
-const wordInput = document.querySelector('.word');
-const wordInputLabel = document.querySelector('label');
+const guessBtn = document.getElementById('guessBtn');
+const resetBtn = document.getElementById('newGameBtn');
+const guessInput = document.getElementById('guessInput');
+const userWordInput = document.getElementById('userWordInput');
+const userWordInputLabel = document.querySelector('label');
 const inputGroup = document.querySelector('.input-group');
-const lettersContainer = document.querySelector('.letters');
-const lostScreen = document.getElementById('gameOver');
+const lettersContainer = document.getElementById('lettersContainer');
+const gameOverScreen = document.getElementById('gameOver');
 const statsBox = document.querySelector('.stats-box');
 const statsElements = document.querySelectorAll('.stats-box > span > b');
 const hint = document.getElementById('hint');
@@ -29,21 +29,21 @@ const game = {
 
         if(result === 'lost') {
             this.letters.forEach((letter) => {
-                letter.classList.remove("letter-hidden");
+                letter.classList.remove("letter--hidden");
             });
 
             hangmanImage.classList.add("hangman-gameover");
-            lostScreen.classList.add("gameOver--lost");
-            lostScreen.textContent = "You lost :(";
+            gameOverScreen.classList.add("gameover-screen--lost");
+            gameOverScreen.textContent = "You lost :(";
         } else if(result === 'win') {
             hangmanImage.classList.add("hangman-gameover");
-            lostScreen.classList.add("gameOver--win");
-            lostScreen.textContent = "You won :)";
+            gameOverScreen.classList.add("gameover-screen--win");
+            gameOverScreen.textContent = "You won :)";
         }
         
-        lostScreen.style.display = "flex";
-        lostScreen.style.animation = "zoomIn .5s ease-in";
-        input.style.display = 'none';
+        gameOverScreen.style.display = "flex";
+        gameOverScreen.style.animation = "zoomIn .5s ease-in";
+        guessInput.style.display = 'none';
         guessBtn.style.display = 'none';
         statsBox.style.display = 'flex';
 
@@ -89,16 +89,22 @@ const game = {
                     <span class="letter">m</span>
                     <span class="letter">e</span>
                 </div>`;
-        input.style.display = 'block';
+        guessInput.style.display = 'block';
         statsBox.style.display = 'none';
-        lostScreen.style.display = 'none';
-        input.value = '';
+        gameOverScreen.style.display = 'none';
+        guessInput.value = '';
         inputGroup.style.display = 'block';
         guessBtn.style.display = 'block';
         guessBtn.textContent = 'Start';
         hangmanImage.style.display = 'none';
-        wordInput.value = '';
+        userWordInput.value = '';
         hangmanImage.classList.remove('hangman-gameover');
+        if(document.querySelector('body').classList.contains('dark')) {
+            gameOverScreen.className = 'gameover-screen dark';
+        } else {
+            gameOverScreen.className = 'gameover-screen';
+        }
+        gameOverScreen.removeAttribute('style');
         hangmanImage.src = 'hangman-0.jpg';
         hint.style.display = 'none';
     } 
@@ -112,7 +118,8 @@ document.addEventListener('keypress', function(e) {
 
 guessBtn.addEventListener('click', () => {
     if(game.phase === 0) {
-        if(!wordInput.value) {
+        // If the user input is empty, get a random word
+        if(!userWordInput.value) {
             const randomWords = {
                 noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game'],
                 verb: ['sweeping', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
@@ -125,8 +132,10 @@ guessBtn.addEventListener('click', () => {
             game.word = randomWords[category][randomNumberWord];
             game.category = category;
         }
-        if(!game.word) game.word = wordInput.value.toLowerCase();
+        // If the user input isn't empty, set game's word to user's input
+        if(!game.word) game.word = userWordInput.value.toLowerCase();
         if(!game.gameOver && game.word) {
+            // If the word is set, basically game initialization
             game.startTime = performance.now();
             if(game.category) {
                 hint.style.display = "inline-block";
@@ -139,7 +148,7 @@ guessBtn.addEventListener('click', () => {
             hangmanImage.style.display = 'block';
 
             for(const letter of game.word) {
-                str += letter === ' ' ? "</div><div class='letter-group'>" : `<span class='letter letter-hidden'>${letter}</span>`;
+                str += letter === ' ' ? "</div><div class='letter-group'>" : `<span class='letter letter--hidden'>${letter}</span>`;
             }
 
             str += '</div>';
@@ -148,13 +157,14 @@ guessBtn.addEventListener('click', () => {
         }
     } else if(game.phase === 1) {
         if(!game.gameOver) {
-            const guess = input.value.toLowerCase();
+            // Main game
+            const guess = guessInput.value.toLowerCase();
             game.letters = document.querySelectorAll('.letter');
             if(game.word.includes(guess) && !game.triedWords.includes(guess)) {
                 let i = 0;
                 while(i < game.word.length) {
                     if(game.letters[i].textContent === guess) {
-                        game.letters[i].classList.remove('letter-hidden');
+                        game.letters[i].classList.remove('letter--hidden');
                         game.hits++;
                     }
                     i++
@@ -163,7 +173,7 @@ guessBtn.addEventListener('click', () => {
                 if (game.hits === game.word.length) {
                   game.endGame('win');
                 }
-            } else if(input.value) {
+            } else if(guessInput.value) {
                 game.stage++;
                 game.mistakes++;
                 if(game.stage >= 12) {
@@ -172,7 +182,7 @@ guessBtn.addEventListener('click', () => {
                     hangmanImage.src = `hangman-${game.stage}.jpg`;
                 }
             }
-            input.value = '';
+            guessInput.value = '';
         }
     }
 });
