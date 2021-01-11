@@ -9,7 +9,7 @@ const toggleDarkClass = el => {
 
 darkModeBtn.addEventListener('click', () => {
     toggleDarkClass(body);
-    body.style.background = '#000';
+    body.classList.toggle('dark-bg');
     toggleDarkClass(document.querySelector(".gameOver"));
     document.querySelectorAll('.stats > b').forEach(el => {
         toggleDarkClass(el);

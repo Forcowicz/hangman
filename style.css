@@ -24,6 +24,10 @@ body {
     background-color: #fff;
 }
 
+.dark-bg {
+    background: #000;
+}
+
 .dark {
     filter: invert(1);
 }
