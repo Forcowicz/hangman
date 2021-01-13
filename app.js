@@ -56,6 +56,20 @@ const game = {
         timeElement.textContent = `${timeDifference} seconds`;
     },
 
+    generateRandomWord() {
+        const randomWords = {
+            noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
+            verb: ['sweeping', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+            adjective: ['yellow', 'gray', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+        };
+        const types = ['noun', 'verb', 'adjective'];
+        const randomNumberType = Math.trunc(Math.random() * 3);
+        const category = types[randomNumberType];
+        const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
+        this.word = randomWords[category][randomNumberWord];
+        this.category = category;
+    },
+
     init() {
         game.word = null;
         game.stage = 0;
@@ -120,17 +134,7 @@ guessBtn.addEventListener('click', () => {
     if(game.phase === 0) {
         // If the user input is empty, get a random word
         if(!userWordInput.value) {
-            const randomWords = {
-                noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game'],
-                verb: ['sweeping', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
-                adjective: ['yellow', 'gray', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
-            };
-            const types = ['noun', 'verb', 'adjective'];
-            const randomNumberType = Math.trunc(Math.random() * 3);
-            const category = types[randomNumberType];
-            const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
-            game.word = randomWords[category][randomNumberWord];
-            game.category = category;
+            game.generateRandomWord();
         }
         // If the user input isn't empty, set game's word to user's input
         if(!game.word) game.word = userWordInput.value.toLowerCase();
