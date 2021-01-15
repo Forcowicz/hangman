@@ -13,6 +13,22 @@ const statsBox = document.querySelector('.stats-box');
 const statsElements = document.querySelectorAll('.stats-box > span > b');
 const hint = document.getElementById('hint');
 
+let lettersDOM;
+
+const generateRandomWord = function() {
+    const randomWords = {
+        noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
+        verb: ['sweeping', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+        adjective: ['yellow', 'dangerous', 'gray', 'deadly', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+    };
+    const types = ['noun', 'verb', 'adjective'];
+    const randomNumberType = Math.trunc(Math.random() * 3);
+    const category = types[randomNumberType];
+    const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
+    game.category = category;
+    return randomWords[category][randomNumberWord];
+};
+
 const game = {
     word: null,
     letters: null,
@@ -28,7 +44,7 @@ const game = {
         this.gameOver = true;
 
         if(result === 'lost') {
-            this.letters.forEach((letter) => {
+            lettersDOM.forEach((letter) => {
                 letter.classList.remove("letter--hidden");
             });
 
@@ -51,23 +67,9 @@ const game = {
         const timeDifference = Math.trunc((this.endTime - this.startTime) / 1000);
         const {stage, mistakes} = this;
         const [stageElement, mistakesElement, timeElement] = statsElements;
-        stageElement.textContent = `${stage}/12`;
+        stageElement.textContent = `${stage + 1}/12`;
         mistakesElement.textContent = mistakes;
         timeElement.textContent = `${timeDifference} seconds`;
-    },
-
-    generateRandomWord() {
-        const randomWords = {
-            noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
-            verb: ['sweeping', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
-            adjective: ['yellow', 'gray', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
-        };
-        const types = ['noun', 'verb', 'adjective'];
-        const randomNumberType = Math.trunc(Math.random() * 3);
-        const category = types[randomNumberType];
-        const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
-        this.word = randomWords[category][randomNumberWord];
-        this.category = category;
     },
 
     init() {
@@ -131,57 +133,87 @@ document.addEventListener('keypress', function(e) {
 });
 
 guessBtn.addEventListener('click', () => {
-    if(game.phase === 0) {
-        // If the user input is empty, get a random word
-        if(!userWordInput.value) {
-            game.generateRandomWord();
-        }
-        // If the user input isn't empty, set game's word to user's input
-        if(!game.word) game.word = userWordInput.value.toLowerCase();
-        if(!game.gameOver && game.word) {
-            // If the word is set, basically game initialization
+    if(!game.gameOver) {
+        if (game.phase === 0) {
+            // If the user input is empty, get a random word
+
+            if (userWordInput.value[0] === ' ' || userWordInput.value[userWordInput.value.length - 1] === ' ') {
+                userWordInputLabel.textContent = 'Your word cannot have space at the beginning or at the end!';
+                userWordInput.focus();
+                guessBtn.setAttribute('disabled', true);
+                setTimeout(() => {
+                    userWordInputLabel.textContent = 'Enter a desired word to guess (if empty, a random word will be generated)';
+                    guessBtn.removeAttribute('disabled');
+                }, 3000);
+                return;
+            } else if(userWordInput.value) {
+                let whitespace = 0;
+                for (const char of userWordInput.value) {
+                    if (char === ' ') whitespace++;
+                }
+
+                game.word = whitespace === userWordInput.value.length ? generateRandomWord() : userWordInput.value.toLowerCase();
+            } else {
+                game.word = generateRandomWord();
+            }
+
+            // Set start time
             game.startTime = performance.now();
+
+            // Set hint based on game.category
             if(game.category) {
                 hint.style.display = "inline-block";
                 hint.textContent = `Category: ${game.category}`;
             }
+
             guessBtn.textContent = 'Guess';
             let str = "<div class='letter-group'>";
             game.word = [...game.word];
             inputGroup.style.display = 'none';
             hangmanImage.style.display = 'block';
 
-            for(const letter of game.word) {
+            for (const letter of game.word) {
                 str += letter === ' ' ? "</div><div class='letter-group'>" : `<span class='letter letter--hidden'>${letter}</span>`;
             }
 
             str += '</div>';
             lettersContainer.innerHTML = str;
+
+            // Remove whitespaces from the word
+            if(game.word.includes(' ')) {
+                let newWord = '';
+                for (const char of game.word) {
+                    if (char === ' ') continue;
+                    newWord += char;
+                }
+                game.word = newWord;
+            }
+
             game.phase = 1;
-        }
-    } else if(game.phase === 1) {
-        if(!game.gameOver) {
+        } else if (game.phase === 1) {
             // Main game
             const guess = guessInput.value.toLowerCase();
-            game.letters = document.querySelectorAll('.letter');
-            if(game.word.includes(guess) && !game.triedWords.includes(guess)) {
+            lettersDOM = document.querySelectorAll('.letter');
+            if (game.word.includes(guess) && !game.triedWords.includes(guess)) {
                 let i = 0;
-                while(i < game.word.length) {
-                    if(game.letters[i].textContent === guess) {
-                        game.letters[i].classList.remove('letter--hidden');
+                while (i < game.word.length) {
+                    if (lettersDOM[i].textContent === guess) {
+                        lettersDOM[i].classList.remove('letter--hidden');
                         game.hits++;
                     }
                     i++
                 }
+
                 game.triedWords.push(guess);
                 if (game.hits === game.word.length) {
-                  game.endGame('win');
+                    game.endGame('win');
                 }
-            } else if(guessInput.value) {
+            } else if (guessInput.value) {
                 game.stage++;
                 game.mistakes++;
-                if(game.stage >= 12) {
+                if (game.stage >= 11) {
                     game.endGame('lost');
+                    hangmanImage.src = 'hangman-11.jpg';
                 } else {
                     hangmanImage.src = `hangman-${game.stage}.jpg`;
                 }
