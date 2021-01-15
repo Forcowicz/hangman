@@ -15,11 +15,16 @@ const hint = document.getElementById('hint');
 
 let lettersDOM;
 
+const setDefaultHintContent = () => {
+    hint.textContent = `Category: ${game.category}`;
+    hint.style.color = 'black';
+};
+
 const generateRandomWord = function() {
     const randomWords = {
         noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
-        verb: ['sweeping', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
-        adjective: ['yellow', 'dangerous', 'gray', 'deadly', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+        verb: ['sweeping', 'drowning', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+        adjective: ['yellow', 'brave', 'intelligent', 'dangerous', 'gray', 'deadly', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
     };
     const types = ['noun', 'verb', 'adjective'];
     const randomNumberType = Math.trunc(Math.random() * 3);
@@ -163,7 +168,7 @@ guessBtn.addEventListener('click', () => {
             // Set hint based on game.category
             if(game.category) {
                 hint.style.display = "inline-block";
-                hint.textContent = `Category: ${game.category}`;
+                setDefaultHintContent();
             }
 
             guessBtn.textContent = 'Guess';
@@ -208,9 +213,16 @@ guessBtn.addEventListener('click', () => {
                 if (game.hits === game.word.length) {
                     game.endGame('win');
                 }
+            } else if(game.triedWords.includes(guess)) {
+                hint.textContent = `You tried this letter arleady (${guess})`;
+                hint.style.color = 'red';
+                setTimeout(() => {
+                    setDefaultHintContent();
+                }, 2000);
             } else if (guessInput.value) {
                 game.stage++;
                 game.mistakes++;
+                game.triedWords.push(guess);
                 if (game.stage >= 11) {
                     game.endGame('lost');
                     hangmanImage.src = 'hangman-11.jpg';
