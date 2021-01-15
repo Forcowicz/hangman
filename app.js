@@ -197,7 +197,7 @@ guessBtn.addEventListener('click', () => {
             game.phase = 1;
         } else if (game.phase === 1) {
             // Main game
-            const guess = guessInput.value.toLowerCase();
+            const guess = guessInput.value.toLowerCase().substr(0, 1);
             lettersDOM = document.querySelectorAll('.letter');
             if (game.word.includes(guess) && !game.triedWords.includes(guess)) {
                 let i = 0;
