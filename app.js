@@ -12,6 +12,7 @@ const gameOverScreen = document.getElementById('gameOver');
 const statsBox = document.querySelector('.stats-box');
 const statsElements = document.querySelectorAll('.stats-box > span > b');
 const hint = document.getElementById('hint');
+const loadingScreen = document.querySelector('.loading-screen');
 
 let lettersDOM;
 
@@ -20,18 +21,27 @@ const setDefaultHintContent = () => {
     hint.style.color = 'black';
 };
 
-const generateRandomWord = function() {
-    const randomWords = {
-        noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
-        verb: ['sweeping', 'drowning', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
-        adjective: ['yellow', 'brave', 'intelligent', 'dangerous', 'gray', 'deadly', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
-    };
-    const types = ['noun', 'verb', 'adjective'];
-    const randomNumberType = Math.trunc(Math.random() * 3);
-    const category = types[randomNumberType];
-    const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
-    game.category = category;
-    return randomWords[category][randomNumberWord];
+const generateRandomWord = async function() {
+    try {
+        const data = await fetch('https://random-word-api.herokuapp.com/word/?number=1');
+        if(data.ok) {
+            const word = await data.json();
+            return word[0];
+        }
+    } catch(err) {
+        console.error("Couldn't get word from API, using local database...")
+        const randomWords = {
+            noun: ['inspector', 'grass', 'toilet', 'sympathy', 'driver', 'resolution', 'funeral', 'branch', 'core', 'failure', 'twilight', 'simplicity', 'reactor', 'hospital', 'game', 'force', 'moral', 'solid', 'battle', 'female'],
+            verb: ['sweeping', 'drowning', 'shooting', 'running', 'eating', 'dancing', 'realizing', 'reinforcing', 'promote', 'driving', 'swimming', 'crawling', 'working', 'jogging', 'flying', 'returning', 'stealing', 'yelling', 'shouting', 'singing', 'sleeping'],
+            adjective: ['yellow', 'brave', 'intelligent', 'dangerous', 'gray', 'deadly', 'immobile', 'weird', 'dizzy', 'flappy', 'funny', 'pathetic', 'nice', 'small', 'big', 'enormous', 'hard-working', 'hilarious', 'trustworthy', 'lazy', 'invisible', 'invicible', 'fast', 'slow', 'tiny', 'tall', 'short', 'numeric']
+        };
+        const types = ['noun', 'verb', 'adjective'];
+        const randomNumberType = Math.trunc(Math.random() * 3);
+        const category = types[randomNumberType];
+        const randomNumberWord = Math.trunc(Math.random() * randomWords[category].length) + 1;
+        game.category = category;
+        return randomWords[category][randomNumberWord];
+    }
 };
 
 const game = {
@@ -137,10 +147,11 @@ document.addEventListener('keypress', function(e) {
     if(e.code === 'Enter') guessBtn.click();
 });
 
-guessBtn.addEventListener('click', () => {
+guessBtn.addEventListener('click', async () => {
     if(!game.gameOver) {
         if (game.phase === 0) {
             // If the user input is empty, get a random word
+            loadingScreen.classList.remove('hidden');
 
             if (userWordInput.value[0] === ' ' || userWordInput.value[userWordInput.value.length - 1] === ' ') {
                 userWordInputLabel.textContent = 'Your word cannot have space at the beginning or at the end!';
@@ -157,10 +168,13 @@ guessBtn.addEventListener('click', () => {
                     if (char === ' ') whitespace++;
                 }
 
-                game.word = whitespace === userWordInput.value.length ? generateRandomWord() : userWordInput.value.toLowerCase();
+                game.word = whitespace === userWordInput.value.length ? await generateRandomWord().then(word => game.word = word) : userWordInput.value.toLowerCase();
             } else {
-                game.word = generateRandomWord();
+                game.word = await generateRandomWord().then(word => game.word = word);
             }
+
+            // Remove loading screen
+            loadingScreen.classList.add('hidden');
 
             // Set start time
             game.startTime = performance.now();
@@ -213,13 +227,7 @@ guessBtn.addEventListener('click', () => {
                 if (game.hits === game.word.length) {
                     game.endGame('win');
                 }
-            } else if(game.triedWords.includes(guess)) {
-                hint.textContent = `You tried this letter arleady (${guess})`;
-                hint.style.color = 'red';
-                setTimeout(() => {
-                    setDefaultHintContent();
-                }, 2000);
-            } else if (guessInput.value) {
+            } else if (guessInput.value && !game.triedWords.includes(guess)) {
                 game.stage++;
                 game.mistakes++;
                 game.triedWords.push(guess);

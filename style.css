@@ -250,6 +250,28 @@ button:hover::after {
     font-weight: 700;
 }
 
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    display: grid;
+    place-items: center;
+    z-index: 10;
+}
+
+.loading-screen__message {
+    font-size: 5rem;
+    color: #000;
+    text-transform: uppercase;
+}
+
+.hidden {
+    display: none;
+}
+
 /*
 BREAKPOINTS:
 900px = 56.25em

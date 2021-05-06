@@ -1,0 +1,22 @@
+{
+  "name": "hangman-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "live-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Forcowicz/hangman.git"
+  },
+  "author": "Marek Żywar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Forcowicz/hangman/issues"
+  },
+  "homepage": "https://github.com/Forcowicz/hangman#readme",
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}

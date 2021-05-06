@@ -10,6 +10,9 @@
     <link rel="icon" href="favicon.ico">
 </head>
 <body>
+    <div class="loading-screen hidden">
+        <h5 class="loading-screen__message">Loading</h5>
+    </div>
     <div class="wrapper">
         <main class="app">
             <div class="hangman-container">
@@ -48,7 +51,7 @@
                 <span class="stats">Time: <b></b></span>
             </div>
             <input class="guess-input" type="text" maxlength="1" id="guessInput" autocomplete="off">
-            <span class="stats" id="hint"></span>
+            <span class="stats" id="hint">Placeholder</span>
             <button id="guessBtn">Start</button>
             <button id="newGameBtn">Play again</button>
             <button id="darkModeBtn">Dark mode: Off</button>
