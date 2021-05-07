@@ -147,100 +147,112 @@ document.addEventListener('keypress', function(e) {
     if(e.code === 'Enter') guessBtn.click();
 });
 
-guessBtn.addEventListener('click', async () => {
-    if(!game.gameOver) {
-        if (game.phase === 0) {
-            // If the user input is empty, get a random word
-            loadingScreen.classList.remove('hidden');
+const startGame = async function () {
+    // If the user input is empty, get a random word
 
-            if (userWordInput.value[0] === ' ' || userWordInput.value[userWordInput.value.length - 1] === ' ') {
-                userWordInputLabel.textContent = 'Your word cannot have space at the beginning or at the end!';
-                userWordInput.focus();
-                guessBtn.setAttribute('disabled', true);
-                setTimeout(() => {
-                    userWordInputLabel.textContent = 'Enter a desired word to guess (if empty, a random word will be generated)';
-                    guessBtn.removeAttribute('disabled');
-                }, 3000);
-                return;
-            } else if(userWordInput.value) {
-                let whitespace = 0;
-                for (const char of userWordInput.value) {
-                    if (char === ' ') whitespace++;
-                }
+    loadingScreen.classList.remove('hidden');
 
-                game.word = whitespace === userWordInput.value.length ? await generateRandomWord().then(word => game.word = word) : userWordInput.value.toLowerCase();
-            } else {
-                game.word = await generateRandomWord().then(word => game.word = word);
+    if (userWordInput.value[0] === ' ' || userWordInput.value[userWordInput.value.length - 1] === ' ') {
+        userWordInputLabel.textContent = 'Your word cannot have space at the beginning or at the end!';
+        userWordInput.focus();
+        guessBtn.setAttribute('disabled', true);
+        setTimeout(() => {
+            userWordInputLabel.textContent = 'Enter a desired word to guess (if empty, a random word will be generated)';
+            guessBtn.removeAttribute('disabled');
+        }, 3000);
+        return;
+    } else if (userWordInput.value) {
+        let whitespace = 0;
+        for (const char of userWordInput.value) {
+            if (char === ' ') whitespace++;
+        }
+
+        game.word = whitespace === userWordInput.value.length ? await generateRandomWord().then(word => game.word = word) : userWordInput.value.toLowerCase();
+    } else {
+        game.word = await generateRandomWord().then(word => game.word = word);
+    }
+
+    // Remove loading screen
+    loadingScreen.classList.add('hidden');
+
+    // Set start time
+    game.startTime = performance.now();
+
+    // Set hint based on game.category
+    if (game.category) {
+        hint.style.display = "inline-block";
+        setDefaultHintContent();
+    }
+
+    guessBtn.textContent = 'Guess';
+    let str = "<div class='letter-group'>";
+    game.word = [...game.word];
+    inputGroup.style.display = 'none';
+    hangmanImage.style.display = 'block';
+
+    for (const letter of game.word) {
+        str += letter === ' ' ? "</div><div class='letter-group'>" : `<span class='letter letter--hidden'>${letter}</span>`;
+    }
+
+    str += '</div>';
+    lettersContainer.innerHTML = str;
+
+    // Remove whitespaces from the word
+    if (game.word.includes(' ')) {
+        let newWord = '';
+        for (const char of game.word) {
+            if (char === ' ') continue;
+            newWord += char;
+        }
+        game.word = newWord;
+    }
+
+    game.phase = 1;
+}
+
+const mainGame = function () {
+    // Main game
+
+    const guess = guessInput.value.toLowerCase().substr(0, 1);
+    lettersDOM = document.querySelectorAll('.letter');
+    if (game.word.includes(guess) && !game.triedWords.includes(guess)) {
+        let i = 0;
+        while (i < game.word.length) {
+            if (lettersDOM[i].textContent === guess) {
+                lettersDOM[i].classList.remove('letter--hidden');
+                game.hits++;
             }
+            i++
+        }
 
-            // Remove loading screen
-            loadingScreen.classList.add('hidden');
-
-            // Set start time
-            game.startTime = performance.now();
-
-            // Set hint based on game.category
-            if(game.category) {
-                hint.style.display = "inline-block";
-                setDefaultHintContent();
-            }
-
-            guessBtn.textContent = 'Guess';
-            let str = "<div class='letter-group'>";
-            game.word = [...game.word];
-            inputGroup.style.display = 'none';
-            hangmanImage.style.display = 'block';
-
-            for (const letter of game.word) {
-                str += letter === ' ' ? "</div><div class='letter-group'>" : `<span class='letter letter--hidden'>${letter}</span>`;
-            }
-
-            str += '</div>';
-            lettersContainer.innerHTML = str;
-
-            // Remove whitespaces from the word
-            if(game.word.includes(' ')) {
-                let newWord = '';
-                for (const char of game.word) {
-                    if (char === ' ') continue;
-                    newWord += char;
-                }
-                game.word = newWord;
-            }
-
-            game.phase = 1;
-        } else if (game.phase === 1) {
-            // Main game
-            const guess = guessInput.value.toLowerCase().substr(0, 1);
-            lettersDOM = document.querySelectorAll('.letter');
-            if (game.word.includes(guess) && !game.triedWords.includes(guess)) {
-                let i = 0;
-                while (i < game.word.length) {
-                    if (lettersDOM[i].textContent === guess) {
-                        lettersDOM[i].classList.remove('letter--hidden');
-                        game.hits++;
-                    }
-                    i++
-                }
-
-                game.triedWords.push(guess);
-                if (game.hits === game.word.length) {
-                    game.endGame('win');
-                }
-            } else if (guessInput.value && !game.triedWords.includes(guess)) {
-                game.stage++;
-                game.mistakes++;
-                game.triedWords.push(guess);
-                if (game.stage >= 11) {
-                    game.endGame('lost');
-                    hangmanImage.src = 'hangman-11.jpg';
-                } else {
-                    hangmanImage.src = `hangman-${game.stage}.jpg`;
-                }
-            }
-            guessInput.value = '';
+        game.triedWords.push(guess);
+        if (game.hits === game.word.length) {
+            game.endGame('win');
+        }
+    } else if (guessInput.value && !game.triedWords.includes(guess)) {
+        game.stage++;
+        game.mistakes++;
+        game.triedWords.push(guess);
+        if (game.stage >= 11) {
+            game.endGame('lost');
+            hangmanImage.src = 'hangman-11.jpg';
+        } else {
+            hangmanImage.src = `hangman-${game.stage}.jpg`;
         }
     }
+    guessInput.value = '';
+}
+
+guessBtn.addEventListener('click', function () {
+    switch(game.phase) {
+        case 0:
+            // noinspection JSIgnoredPromiseFromCall
+            startGame();
+            break;
+        case 1:
+            mainGame();
+    }
+
 });
 
 resetBtn.addEventListener('click', game.init);
